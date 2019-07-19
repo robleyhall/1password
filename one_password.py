@@ -1,6 +1,17 @@
 #!/usr/bin/env python
 # coding=utf-8
 #
+# API to wrap the 1password cli
+#
+# use the 1password entry title to query either complete 1password items or only the password
+#
+# assumes IBM as the account but can be easily modified to use any 1password account
+#
+# usage:
+#
+#    import one_password as op
+#    password = op.get_password('sample')
+#
 
 import argparse
 import json
@@ -44,7 +55,7 @@ def signin():
 
 def get_op_item(item):
     signin()
-    cmdline = "op get item %s" % item
+    cmdline = "op get item \"%s\"" % item
 
     out = subprocess.Popen(cmdline, shell=True, stdout=subprocess.PIPE).stdout.read()
     return out
@@ -56,6 +67,10 @@ def get_password_from_item(item):
         if fields:
             password = [ f for f in fields if f.get('designation') == "password"][0].get('value')
             return password
+        else:
+            password = details.get('password')
+            return password
+        
 
 def get_password(item_name):
     signin()
@@ -75,17 +90,8 @@ def main(args):
     elif args.get('password'):
         print(get_password(args.get('password')))
 
-
-        # item = get_op_item(args.get('password'))
-        # if item:
-        #     password = get_password_from_item(json.loads(item))
-        # else:
-        #     password = None
-        # print(password)
-    
-
 if __name__ == "__main__":
-    op_signin()
+    signin()
     
     parser = argparse.ArgumentParser(description='retrieve onepassword items and/or passwords')
     parser.add_argument('-i','--item', help='item to display in full', required=False)
