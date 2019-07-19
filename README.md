@@ -21,7 +21,6 @@ The module caches the session token to prevent repeated password prompts as long
 Dump the entire item
 ```
 python one_password.py --item <item to query>
-
 ```
 
 Display the password for the item:
