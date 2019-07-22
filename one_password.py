@@ -39,10 +39,11 @@ def op_cache_token(session_env_var):
 
 def signin():
     session_env_var = op_get_cached_token()
-    if session_env_var:    
+    if session_env_var:
         os.environ["OP_SESSION_ibm"] = session_env_var
     out = subprocess.Popen("op get item none", shell=True, stderr=subprocess.PIPE).stderr.read()
-    if 'You are not currently signed in' in out:
+
+    if 'You are not currently signed in' in out or 'Authentication required' in out:
         print('Logging into 1Password to get credentials')
         session_env_var = subprocess.Popen("op signin ibm --output=raw", shell=True, stdout=subprocess.PIPE).stdout.read().strip()
         if not session_env_var:
@@ -91,9 +92,8 @@ def main(args):
         print(get_password(args.get('password')))
 
 if __name__ == "__main__":
-    signin()
     
-    parser = argparse.ArgumentParser(description='retrieve onepassword items and/or passwords')
+    parser = argparse.ArgumentParser(description='retrieve 1password items and/or passwords')
     parser.add_argument('-i','--item', help='item to display in full', required=False)
     parser.add_argument('-p','--password', help='get password for item', required=False)
     args = vars(parser.parse_args())
