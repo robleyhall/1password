@@ -1,4 +1,4 @@
-# one_password
+# 1password
 python api wrapper for the 1password cli
 
 
